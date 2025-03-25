@@ -48,7 +48,7 @@ RUN_TEST = [
                 "GA_MUTATION_RATE": 0.3,
                 "GA_TOURNAMENT_SIZE": 7,
                 "GA_ELITISM_SIZE": 1,
-                "GA_IMPROVED_EVALUATION": True,
+                "GA_IMPROVED_EVALUATION": False,
             },
         ]
     },
@@ -83,7 +83,7 @@ RUN_TEST = [
                 "GA_MUTATION_RATE": 0.3,
                 "GA_TOURNAMENT_SIZE": 7,
                 "GA_ELITISM_SIZE": 1,
-                "GA_IMPROVED_EVALUATION": True,
+                "GA_IMPROVED_EVALUATION": False,
             },
         ]
     }

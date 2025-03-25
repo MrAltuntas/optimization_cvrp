@@ -12,6 +12,8 @@ GA_CROSSOVER_RATE = 0.7
 GA_MUTATION_RATE = 0.1
 GA_TOURNAMENT_SIZE = 5
 GA_ELITISM_SIZE = 2
+# basicaly it's about evaluation func(fitness func) if it's false when we can't find a valid path we are returning infinite penalty but if it's true we will return a penatly according to how many city able to visit
+GA_IMPROVED_EVALUATION = True
 
 RUN_TEST = [
     {
@@ -26,7 +28,9 @@ RUN_TEST = [
                 "GA_CROSSOVER_RATE": 0.7,
                 "GA_MUTATION_RATE": 0.1,
                 "GA_TOURNAMENT_SIZE": 5,
-                "GA_ELITISM_SIZE": 2
+                "GA_ELITISM_SIZE": 2,
+                "GA_IMPROVED_EVALUATION": True,
+
             },
             {
                 "GA_POPULATION_SIZE": 2000,
@@ -34,7 +38,8 @@ RUN_TEST = [
                 "GA_CROSSOVER_RATE": 0.5,
                 "GA_MUTATION_RATE": 0.2,
                 "GA_TOURNAMENT_SIZE": 10,
-                "GA_ELITISM_SIZE": 3
+                "GA_ELITISM_SIZE": 3,
+                "GA_IMPROVED_EVALUATION": True,
             },
             {
                 "GA_POPULATION_SIZE": 2000,
@@ -42,7 +47,8 @@ RUN_TEST = [
                 "GA_CROSSOVER_RATE": 0.3,
                 "GA_MUTATION_RATE": 0.3,
                 "GA_TOURNAMENT_SIZE": 7,
-                "GA_ELITISM_SIZE": 1
+                "GA_ELITISM_SIZE": 1,
+                "GA_IMPROVED_EVALUATION": True,
             },
         ]
     },
@@ -58,7 +64,8 @@ RUN_TEST = [
                 "GA_CROSSOVER_RATE": 0.7,
                 "GA_MUTATION_RATE": 0.1,
                 "GA_TOURNAMENT_SIZE": 5,
-                "GA_ELITISM_SIZE": 2
+                "GA_ELITISM_SIZE": 2,
+                "GA_IMPROVED_EVALUATION": True,
             },
             {
                 "GA_POPULATION_SIZE": 20000,
@@ -66,7 +73,8 @@ RUN_TEST = [
                 "GA_CROSSOVER_RATE": 0.5,
                 "GA_MUTATION_RATE": 0.2,
                 "GA_TOURNAMENT_SIZE": 10,
-                "GA_ELITISM_SIZE": 3
+                "GA_ELITISM_SIZE": 3,
+                "GA_IMPROVED_EVALUATION": True,
             },
             {
                 "GA_POPULATION_SIZE": 20000,
@@ -74,7 +82,8 @@ RUN_TEST = [
                 "GA_CROSSOVER_RATE": 0.3,
                 "GA_MUTATION_RATE": 0.3,
                 "GA_TOURNAMENT_SIZE": 7,
-                "GA_ELITISM_SIZE": 1
+                "GA_ELITISM_SIZE": 1,
+                "GA_IMPROVED_EVALUATION": True,
             },
         ]
     }

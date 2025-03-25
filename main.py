@@ -16,7 +16,8 @@ ga_solver = genetic_cvrp.GeneticCVRP(
     crossover_rate=config.GA_CROSSOVER_RATE,
     mutation_rate=config.GA_MUTATION_RATE,
     tournament_size=config.GA_TOURNAMENT_SIZE,
-    elitism_count=config.GA_ELITISM_SIZE
+    elitism_count=config.GA_ELITISM_SIZE,
+    improved_evaluation=config.GA_IMPROVED_EVALUATION,
 )
 
 

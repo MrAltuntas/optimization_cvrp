@@ -78,6 +78,7 @@ def run_test():
             print(f"  Mutation Rate: {ga_setting['GA_MUTATION_RATE']}")
             print(f"  Tournament Size: {ga_setting['GA_TOURNAMENT_SIZE']}")
             print(f"  Elitism Size: {ga_setting['GA_ELITISM_SIZE']}")
+            print(f"  Improved Evaluation: {ga_setting['GA_IMPROVED_EVALUATION']}")
 
             ga_solver = genetic_cvrp.GeneticCVRP(
                 cvrp_problem,
@@ -86,7 +87,8 @@ def run_test():
                 crossover_rate=ga_setting['GA_CROSSOVER_RATE'],
                 mutation_rate=ga_setting['GA_MUTATION_RATE'],
                 tournament_size=ga_setting['GA_TOURNAMENT_SIZE'],
-                elitism_count=ga_setting['GA_ELITISM_SIZE']
+                elitism_count=ga_setting['GA_ELITISM_SIZE'],
+                improved_evaluation=ga_setting['GA_IMPROVED_EVALUATION'],
             )
 
             start_time = time.time()

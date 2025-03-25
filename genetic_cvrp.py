@@ -1,11 +1,10 @@
 import random
-import copy
 import cvrp as CVRP
 
 class GeneticCVRP:
     def __init__(self, cvrp: CVRP.CVRP, population_size=100, generations=100,
                  crossover_rate=0.7, mutation_rate=0.1, tournament_size=5,
-                 elitism_count=2):
+                 elitism_count=2, improved_evaluation=False):
         self.problem = cvrp
         self.population_size = population_size
         self.generations = generations
@@ -15,6 +14,7 @@ class GeneticCVRP:
         self.elitism_count = elitism_count
         self.best_solution = None
         self.best_fitness = float('inf')
+        self.improved_evaluation = improved_evaluation
 
     def create_individual(self):
         """
@@ -37,6 +37,34 @@ class GeneticCVRP:
             individual.append(random.choice(all_possible_cities))
 
         return individual
+
+    def calculate_fitness_improved(self, individual):
+        """
+        Evaluates fitness based on:
+        1. Whether all cities are visited
+        2. Total route length
+        3. Respect for capacity constraints
+        """
+
+        # Check if all cities are visited
+        visited = set(individual) - {self.problem.depot}
+        if visited != self.problem.all_cities:
+            # For missing cities, we'll still use a high penalty but based on how many cities are missing
+            missing_cities = len(self.problem.all_cities) - len(visited)
+            return 10000 + (missing_cities * 1000)  # High penalty scaled by missing cities
+
+        # Simulate the journey to validate capacity constraints
+        path = individual.copy()
+
+        # Validate the path
+        movements, is_valid = self.problem.is_valid_path(path)
+
+        if not is_valid:
+            # Instead of infinity, return a high but finite value that rewards progress
+            # The more movements completed, the better (lower) the fitness value
+            return 5000 - movements  # This creates a gradient for invalid solutions
+
+        return movements  # Return total movements as fitness for valid solutions
 
     def calculate_fitness(self, individual):
         """
@@ -68,7 +96,12 @@ class GeneticCVRP:
         """
         tournament = random.sample(population, self.tournament_size)
 
-        return min(tournament, key=lambda x: self.calculate_fitness(x))
+        if self.improved_evaluation:
+            return min(tournament, key=lambda x: self.calculate_fitness_improved(x))
+        else:
+            return min(tournament, key=lambda x: self.calculate_fitness(x))
+
+
 
     def crossover(self, parent1, parent2):
         """
@@ -144,12 +177,21 @@ class GeneticCVRP:
         # Evolution loop
         for generation in range(self.generations):
             # Evaluate and sort population
-            population.sort(key=lambda x: self.calculate_fitness(x))
+            if self.improved_evaluation:
+                population.sort(key=lambda x: self.calculate_fitness_improved(x))
+            else:
+                population.sort(key=lambda x: self.calculate_fitness(x))
+
 
 
             # Update best solution if better one found
             current_best = population[0]
-            current_best_fitness = self.calculate_fitness(current_best)
+            if self.improved_evaluation:
+                current_best_fitness = self.calculate_fitness_improved(current_best)
+            else:
+                current_best_fitness = self.calculate_fitness(current_best)
+
+
 
             if current_best_fitness < self.best_fitness:
                 self.best_solution = current_best.copy()

@@ -178,7 +178,11 @@ class GeneticCVRP:
 
             # Log progress periodically
             if generation % 10 == 0:
-                print("generation:", generation,"best 10 induvidual: ", population[:10])
+                print(f"Generation {generation}: Best fitness = {self.best_fitness}")
+
+        if self.best_solution is None:
+            print("Warning: No valid solution found")
+            return None
 
         # Prepare final solution with depot added if needed
         solution = self.best_solution.copy()

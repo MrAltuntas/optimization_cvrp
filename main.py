@@ -1,44 +1,54 @@
+import config
 import cvrp
 import greedy_cvrp
 import random_cvrp
 import genetic_cvrp
 import time
 
-cvrp = cvrp.CVRP(num_cities=5, depot=0, distance=5, capacity=25)
-
-#print(cvrp.is_valid_path([1,2,0,3,4]))  # 5, True
-#print(cvrp.is_valid_path([1, 2, 1, 3]))  # 2, False
-#print(cvrp.is_valid_path([1, 2, 3]))     # 3, False
-
-greedy_solver = greedy_cvrp.GreedyCVRP(cvrp)
-greedy_path = greedy_solver.find_path()
-
-random_solver = random_cvrp.RandomCVRP(cvrp)
-random_path = random_solver.random_path()
-
-
-
-print("Greedy path:", cvrp.is_valid_path(greedy_path), greedy_path)
-print("Random path:", cvrp.is_valid_path(random_path), random_path)
-
-
-#### tüm genetic için olan işlemleri burada yap
-
-print("Running Genetic Algorithm:")
-start_time = time.time()
+# CVRP problemi oluştur
+cvrp_problem = cvrp.CVRP(num_cities=config.CVRP_NUMBER_OF_CITIES, depot=config.CVRP_DEPOT_POSITION, distance=config.CVRP_DISTANCE_BETWEEN_CITIES, capacity=config.CVRP_CAPACITY)
+greedy_solver = greedy_cvrp.GreedyCVRP(cvrp_problem)
+random_solver = random_cvrp.RandomCVRP(cvrp_problem)
 ga_solver = genetic_cvrp.GeneticCVRP(
-    cvrp,
-    population_size=100,
-    generations=50,
-    crossover_rate=0.7,
-    mutation_rate=0.1,
-    tournament_size=5,
-    elitism_count=2
+    cvrp_problem,
+    population_size=config.GA_POPULATION_SIZE,
+    generations=config.GA_GENERATIONS,
+    crossover_rate=config.GA_CROSSOVER_RATE,
+    mutation_rate=config.GA_MUTATION_RATE,
+    tournament_size=config.GA_TOURNAMENT_SIZE,
+    elitism_count=config.GA_ELITISM_SIZE
 )
+
+
+# 1. Greedy algoritma
+print("1. Greedy Algoritma:")
+start_time = time.time()
+greedy_path = greedy_solver.find_path()
+greedy_time = time.time() - start_time
+greedy_movements, greedy_valid = cvrp_problem.is_valid_path(greedy_path)
+print(f"Geçerli: {greedy_valid}, Hareketler: {greedy_movements}, Süre: {greedy_time:.4f}s")
+print(f"Rota: {greedy_path}")
+print()
+
+# 2. Random algoritma
+print("2. Random Algoritma:")
+start_time = time.time()
+random_path = random_solver.random_path()
+random_time = time.time() - start_time
+random_movements, random_valid = cvrp_problem.is_valid_path(random_path)
+print(f"Geçerli: {random_valid}, Hareketler: {random_movements}, Süre: {random_time:.4f}s")
+print(f"Rota: {random_path}")
+print()
+
+# 3. Genetik algoritma
+print("3. Genetik Algoritma:")
+start_time = time.time()
 ga_path = ga_solver.solve()
 ga_time = time.time() - start_time
-print("Genetic algorithm path:", ga_path)
-movements, is_valid = cvrp.is_valid_path(ga_path)
-print(f"Valid: {is_valid}, Movements: {movements}")
-print(f"Time taken: {ga_time:.4f} seconds")
-print("-" * 50)
+
+if ga_path is not None:
+    ga_movements, ga_valid = cvrp_problem.is_valid_path(ga_path)
+    print(f"Geçerli: {ga_valid}, Hareketler: {ga_movements}, Süre: {ga_time:.4f}s")
+    print(f"Rota: {ga_path}")
+else:
+    print("Geçerli çözüm bulunamadı, Süre: {ga_time:.4f}s")

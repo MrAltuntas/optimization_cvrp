@@ -30,7 +30,7 @@ class CVRP:
                 movement += 1
                 current = city
                 fuel = self.capacity
-                print(current, fuel)
+                #print(current, fuel)
                 continue
 
             if city in visited:
@@ -40,7 +40,7 @@ class CVRP:
             movement += 1
             current = city
             visited.add(city)
-            print(current, fuel)
+            #print(current, fuel)
 
 
         return movement, visited == self.all_cities

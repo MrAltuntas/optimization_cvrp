@@ -38,6 +38,46 @@ class GeneticCVRP:
 
         return individual
 
+    def create_individual_improved(self):
+        """
+        Creates a random individual where:
+        - Each city appears exactly once (satisfying CVRP constraint)
+        - Depot positions are randomly inserted to allow the GA to discover optimal patterns
+        """
+        # Start with a permutation of all cities (excluding depot)
+        cities = list(self.problem.all_cities)
+        random.shuffle(cities)
+
+        # Create a list of positions where we might insert depots
+        # We'll randomly place between 0 and n depots
+        num_cities = len(cities)
+        num_depots = random.randint(0, num_cities + 1)
+
+        # Generate random positions to insert depots
+        depot_positions = sorted(random.sample(range(num_cities + 1), min(num_depots, num_cities + 1)))
+
+        # Build the individual by interleaving cities and depots
+        individual = []
+        city_index = 0
+
+        # Insert elements in the correct order
+        for i in range(num_cities + num_depots):
+            if i in depot_positions and city_index < num_cities:
+                individual.append(self.problem.depot)
+            elif city_index < num_cities:
+                individual.append(cities[city_index])
+                city_index += 1
+            else:
+                # If we've used all cities but still have positions, add depots
+                individual.append(self.problem.depot)
+
+        # Ensure we have at least one depot in the path
+        if self.problem.depot not in individual:
+            insert_pos = random.randint(0, len(individual))
+            individual.insert(insert_pos, self.problem.depot)
+
+        return individual
+
     def calculate_fitness_improved(self, individual):
         """
         Evaluates fitness based on:
@@ -101,8 +141,6 @@ class GeneticCVRP:
         else:
             return min(tournament, key=lambda x: self.calculate_fitness(x))
 
-
-
     def crossover(self, parent1, parent2):
         """
         Modified crossover that works with the new representation
@@ -126,6 +164,60 @@ class GeneticCVRP:
             child = child[:max_length]
 
         return child
+
+    def crossover_improved(self, parent1, parent2):
+        """
+        Implements Ordered Crossover (OX) which preserves the constraint
+        that each city appears exactly once.
+        """
+        if random.random() > self.crossover_rate:
+            return parent1.copy()
+
+        # Extract non-depot cities from parents
+        cities1 = [city for city in parent1 if city != self.problem.depot]
+        cities2 = [city for city in parent2 if city != self.problem.depot]
+
+        # If either parent has no cities, return the other
+        if not cities1 or not cities2:
+            return parent1.copy() if cities1 else parent2.copy()
+
+        # Select two random crossover points
+        cx_points = sorted(random.sample(range(len(cities1)), 2))
+
+        # Create offspring city sequence
+        offspring_cities = [None] * len(cities1)
+
+        # Copy segment from first parent
+        for i in range(cx_points[0], cx_points[1]):
+            offspring_cities[i] = cities1[i]
+
+        # Fill remaining positions with cities from second parent
+        remaining_cities = [city for city in cities2 if city not in offspring_cities[cx_points[0]:cx_points[1]]]
+
+        # Fill positions before the segment
+        for i in range(cx_points[0]):
+            offspring_cities[i] = remaining_cities.pop(0)
+
+        # Fill positions after the segment
+        for i in range(cx_points[1], len(offspring_cities)):
+            offspring_cities[i] = remaining_cities.pop(0)
+
+        # Reconstruct path with depot insertions for capacity constraints
+        offspring = []
+        fuel = self.problem.capacity
+
+        # Process each city in the offspring ordering
+        for city in offspring_cities:
+            # Check if we need to return to depot
+            if fuel < 2 * self.problem.distance:
+                offspring.append(self.problem.depot)
+                fuel = self.problem.capacity
+
+            # Visit the city
+            offspring.append(city)
+            fuel -= self.problem.distance
+
+        return offspring
 
     def mutate(self, individual):
         """
@@ -166,6 +258,26 @@ class GeneticCVRP:
                 individual.pop(pos)
 
         return individual
+
+    def mutate_improved(self, individual):
+        """
+        Applies swap mutation to non-depot cities to maintain the valid structure.
+        """
+        if random.random() > self.mutation_rate:
+            return individual
+
+        # Create a copy to avoid modifying the original
+        mutated = individual.copy()
+
+        # Find positions of non-depot cities
+        non_depot_positions = [i for i, city in enumerate(mutated) if city != self.problem.depot]
+
+        # If we have at least 2 non-depot cities, perform swap mutation
+        if len(non_depot_positions) >= 2:
+            pos1, pos2 = random.sample(non_depot_positions, 2)
+            mutated[pos1], mutated[pos2] = mutated[pos2], mutated[pos1]
+
+        return mutated
 
     def evolve(self):
         """

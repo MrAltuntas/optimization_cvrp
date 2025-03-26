@@ -49,7 +49,7 @@ class TestRunner:
             greedy_time = time.time() - start_time
             greedy_movements, greedy_valid = cvrp_problem.is_valid_path(greedy_path)
 
-            print(f"Valid: {greedy_valid}, Movements: {greedy_movements}, Time: {greedy_time:.4f}s")
+            print(f"Valid: {greedy_valid}, Movements: {greedy_movements}, Best Path: {greedy_path}, Time: {greedy_time:.4f}s")
 
             test_results['methods']['greedy'] = {
                 'valid': greedy_valid,
@@ -79,11 +79,12 @@ class TestRunner:
             best_random = min(random_results, key=lambda x: x['movements'])
             avg_random_time = np.mean([r['time'] for r in random_results])
 
-            print(f"Best Valid: {best_random['valid']}, Best Movements: {best_random['movements']}, "
+            print(f"Best Valid: {best_random['valid']}, Best Movements: {best_random['movements']}, Best Path: {best_random['path']},   "
                   f"Avg Time: {avg_random_time:.4f}s")
 
             test_results['methods']['random'] = {
                 'best_valid': best_random['valid'],
+                'best_path': best_random['path'],
                 'best_movements': best_random['movements'],
                 'avg_time': avg_random_time,
                 'all_runs': random_results
@@ -148,10 +149,12 @@ class TestRunner:
 
                     print(f"  Valid: {len(valid_runs)}/{self.num_runs}, "
                           f"Best Movements: {best_ga['movements']}, "
+                          f"Best Path: {best_ga['path']}, "
                           f"Avg Time: {avg_ga_time:.4f}s")
 
                     ga_config_result = {
                         'config_id': ga_idx + 1,
+                        'best_path': best_ga['path'],
                         'settings': ga_setting,
                         'best_valid': best_ga['valid'],
                         'best_movements': best_ga['movements'],
@@ -165,6 +168,7 @@ class TestRunner:
 
                     ga_config_result = {
                         'config_id': ga_idx + 1,
+                        'best_path': None,
                         'settings': ga_setting,
                         'best_valid': False,
                         'avg_time': avg_ga_time,
@@ -227,11 +231,13 @@ class TestRunner:
 
                     print(f"  Valid: {len(valid_runs)}/{self.num_runs}, "
                           f"Best Movements: {best_ts['movements']}, "
+                          f"Best Path: {best_ts['path']}, "
                           f"Avg Time: {avg_ts_time:.4f}s")
 
                     ts_config_result = {
                         'config_id': ts_idx + 1,
                         'settings': ts_setting,
+                        'best_path': best_ts['path'],
                         'best_valid': best_ts['valid'],
                         'best_movements': best_ts['movements'],
                         'avg_time': avg_ts_time,
@@ -245,6 +251,7 @@ class TestRunner:
                     ts_config_result = {
                         'config_id': ts_idx + 1,
                         'settings': ts_setting,
+                        'best_path': None,
                         'best_valid': False,
                         'avg_time': avg_ts_time,
                         'success_rate': 0,
@@ -267,13 +274,15 @@ class TestRunner:
         # Get greedy as baseline
         greedy = test_results['methods']['greedy']
         greedy_movements = greedy['movements']
+        greedy_path = greedy['path']
 
-        print(f"Greedy: Movements={greedy_movements}, Time={greedy['time']:.4f}s")
+        print(f"Greedy: Movements={greedy_movements}, Best path={greedy_path}, Time={greedy['time']:.4f}s")
 
         # Random algorithm
         random = test_results['methods']['random']
 
         print(f"Random: Movements={random['best_movements']}, "
+              f"Best path={random['best_path']}, "
               f"Time={random['avg_time']:.4f}s")
 
         # GA algorithms
@@ -281,7 +290,7 @@ class TestRunner:
             config_id = ga['config_id']
 
             if ga['best_valid']:
-                print(f"GA Config {config_id}: Movements={ga['best_movements']}, "
+                print(f"GA Config {config_id}: Movements={ga['best_movements']}, Best path={ga['best_path']},  "
                       f"Time={ga['avg_time']:.4f}s, Success={ga['success_rate']*100:.1f}%")
             else:
                 print(f"GA Config {config_id}: No valid solution, Time={ga['avg_time']:.4f}s")
@@ -291,7 +300,7 @@ class TestRunner:
             config_id = ts['config_id']
 
             if ts['best_valid']:
-                print(f"TS Config {config_id}: Movements={ts['best_movements']}, "
+                print(f"TS Config {config_id}: Movements={ts['best_movements']}, Best path={ts['best_path']},  "
                       f"Time={ts['avg_time']:.4f}s, Success={ts['success_rate']*100:.1f}%")
             else:
                 print(f"TS Config {config_id}: No valid solution, Time={ts['avg_time']:.4f}s")
@@ -330,6 +339,7 @@ class TestRunner:
                 'capacity': capacity,
                 'best_movements': greedy_movements,
                 'time': greedy['time'],
+                'best_path': greedy['path'],
                 'success_rate': '100%',
                 'parameters': 'N/A'
             })
@@ -344,6 +354,7 @@ class TestRunner:
                 'distance': distance,
                 'capacity': capacity,
                 'best_movements': random['best_movements'],
+                'best_path': random['best_path'],
                 'time': random['avg_time'],
                 'success_rate': f"{sum(1 for r in random['all_runs'] if r['valid']) / len(random['all_runs']) * 100:.1f}%",
                 'parameters': 'N/A'
@@ -371,6 +382,7 @@ class TestRunner:
                         'distance': distance,
                         'capacity': capacity,
                         'best_movements': ga_result['best_movements'],
+                        'best_path': ga_result['best_path'],
                         'time': ga_result['avg_time'],
                         'success_rate': f"{ga_result['success_rate'] * 100:.1f}%",
                         'parameters': params
@@ -391,6 +403,7 @@ class TestRunner:
                         'distance': distance,
                         'capacity': capacity,
                         'best_movements': 'N/A',
+                        'best_path': 'N/A',
                         'time': ga_result['avg_time'],
                         'success_rate': '0.0%',
                         'parameters': params
@@ -414,6 +427,7 @@ class TestRunner:
                         'distance': distance,
                         'capacity': capacity,
                         'best_movements': ts_result['best_movements'],
+                        'best_path': ts_result['best_path'],
                         'time': ts_result['avg_time'],
                         'success_rate': f"{ts_result['success_rate'] * 100:.1f}%",
                         'parameters': params
@@ -430,6 +444,7 @@ class TestRunner:
                         'distance': distance,
                         'capacity': capacity,
                         'best_movements': 'N/A',
+                        'best_path': 'N/A',
                         'time': ts_result['avg_time'],
                         'success_rate': '0.0%',
                         'parameters': params

@@ -1,6 +1,6 @@
 # CVRP Settings
 CVRP_NUMBER_OF_CITIES = 5
-CVRP_DEPOT_POSITION = 0
+CVRP_DEPOT_POSITION = 0 # do not change it i didn't checked how it's effects
 CVRP_DISTANCE_BETWEEN_CITIES = 5
 CVRP_CAPACITY = 10
 

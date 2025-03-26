@@ -30,6 +30,7 @@ RUN_TEST = [
 
     # A-n32-k5: 31 clients + 1 depot, 5 vehicles
     {
+        "NAME": "A-n32-k5",
         "CVRP_NUMBER_OF_CITIES": 32,
         "CVRP_DEPOT_POSITION": 0,
         "CVRP_DISTANCE_BETWEEN_CITIES": 10,  # Adjusted for larger problem
@@ -84,6 +85,7 @@ RUN_TEST = [
 
     # A-n37-k6: 36 clients + 1 depot, 6 vehicles
     {
+        "NAME": "A-n37-k6",
         "CVRP_NUMBER_OF_CITIES": 37,
         "CVRP_DEPOT_POSITION": 0,
         "CVRP_DISTANCE_BETWEEN_CITIES": 10,
@@ -128,6 +130,7 @@ RUN_TEST = [
 
     # A-n39-k5: 38 clients + 1 depot, 5 vehicles
     {
+        "NAME": "A-n39-k5",
         "CVRP_NUMBER_OF_CITIES": 39,
         "CVRP_DEPOT_POSITION": 0,
         "CVRP_DISTANCE_BETWEEN_CITIES": 10,
@@ -172,6 +175,7 @@ RUN_TEST = [
 
     # A-n45-k6: 44 clients + 1 depot, 6 vehicles
     {
+        "NAME": "A-n45-k6",
         "CVRP_NUMBER_OF_CITIES": 45,
         "CVRP_DEPOT_POSITION": 0,
         "CVRP_DISTANCE_BETWEEN_CITIES": 10,
@@ -210,6 +214,7 @@ RUN_TEST = [
 
     # A-n48-k7: 47 clients + 1 depot, 7 vehicles
     {
+        "NAME": "A-n48-k7",
         "CVRP_NUMBER_OF_CITIES": 48,
         "CVRP_DEPOT_POSITION": 0,
         "CVRP_DISTANCE_BETWEEN_CITIES": 10,
@@ -250,6 +255,7 @@ RUN_TEST = [
 
     # A-n54-k7: 53 clients + 1 depot, 7 vehicles
     {
+        "NAME": "A-n54-k7",
         "CVRP_NUMBER_OF_CITIES": 54,
         "CVRP_DEPOT_POSITION": 0,
         "CVRP_DISTANCE_BETWEEN_CITIES": 10,
@@ -288,6 +294,7 @@ RUN_TEST = [
 
     # A-n60-k9: 59 clients + 1 depot, 9 vehicles
     {
+        "NAME": "A-n60-k9",
         "CVRP_NUMBER_OF_CITIES": 60,
         "CVRP_DEPOT_POSITION": 0,
         "CVRP_DISTANCE_BETWEEN_CITIES": 10,

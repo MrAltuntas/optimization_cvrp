@@ -22,7 +22,7 @@ class TestRunner:
     def run_tests(self):
         """Run tests with focus on algorithm comparison"""
         for test_idx, test_config in enumerate(self.test_configs):
-            print(f"\n\n{'='*40} TEST {test_idx+1} {'='*40}")
+            print(f"\n\n{'='*40} TEST {test_idx+1} TEST NAME {test_config['NAME']} {'='*40}")
             print(f"CVRP: Cities={test_config['CVRP_NUMBER_OF_CITIES']}, "
                   f"Distance={test_config['CVRP_DISTANCE_BETWEEN_CITIES']}, "
                   f"Capacity={test_config['CVRP_CAPACITY']}")
@@ -37,6 +37,7 @@ class TestRunner:
 
             test_results = {
                 'test_id': test_idx + 1,
+                'test_name': test_config['NAME'],
                 'cvrp_config': test_config,
                 'methods': {}
             }
@@ -391,6 +392,7 @@ class TestRunner:
 
         for test_result in self.results:
             test_id = test_result['test_id']
+            test_name = test_result['test_name']
             cities = test_result['cvrp_config']['CVRP_NUMBER_OF_CITIES']
             distance = test_result['cvrp_config']['CVRP_DISTANCE_BETWEEN_CITIES']
             capacity = test_result['cvrp_config']['CVRP_CAPACITY']
@@ -402,6 +404,7 @@ class TestRunner:
             # Add greedy row
             comparison_rows.append({
                 'test_id': test_id,
+                'test_name': test_name,
                 'algorithm': 'Greedy Algorithm',
                 'cities': cities,
                 'distance': distance,
@@ -422,6 +425,7 @@ class TestRunner:
             if random['best_valid']:
                 comparison_rows.append({
                     'test_id': test_id,
+                    'test_name': test_name,
                     'algorithm': 'Random Algorithm',
                     'cities': cities,
                     'distance': distance,
@@ -438,6 +442,7 @@ class TestRunner:
             else:
                 comparison_rows.append({
                     'test_id': test_id,
+                    'test_name': test_name,
                     'algorithm': 'Random Algorithm',
                     'cities': cities,
                     'distance': distance,
@@ -468,6 +473,7 @@ class TestRunner:
 
                     comparison_rows.append({
                         'test_id': test_id,
+                        'test_name': test_name,
                         'algorithm': f"GA (Config {config_id})",
                         'cities': cities,
                         'distance': distance,
@@ -492,6 +498,7 @@ class TestRunner:
 
                     comparison_rows.append({
                         'test_id': test_id,
+                        'test_name': test_name,
                         'algorithm': f"GA (Config {config_id})",
                         'cities': cities,
                         'distance': distance,
@@ -518,6 +525,7 @@ class TestRunner:
 
                     comparison_rows.append({
                         'test_id': test_id,
+                        'test_name': test_name,
                         'algorithm': f"TS (Config {config_id})",
                         'cities': cities,
                         'distance': distance,
@@ -538,6 +546,7 @@ class TestRunner:
 
                     comparison_rows.append({
                         'test_id': test_id,
+                        'test_name': test_name,
                         'algorithm': f"TS (Config {config_id})",
                         'cities': cities,
                         'distance': distance,

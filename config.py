@@ -15,6 +15,13 @@ GA_ELITISM_SIZE = 2
 # basicaly it's about evaluation func(fitness func) if it's false when we can't find a valid path we are returning infinite penalty but if it's true we will return a penatly according to how many city able to visit
 GA_IMPROVED_EVALUATION = True
 
+# Tabu Search Settings
+TS_MAX_ITERATIONS = 100
+TS_TABU_SIZE = 10
+TS_NEIGHBORHOOD_SIZE = 20
+
+
+RUN_TEST_COUNT = 1 # how many times do you want to run the below test
 RUN_TEST = [
     {
         "CVRP_NUMBER_OF_CITIES": 5,
@@ -30,7 +37,6 @@ RUN_TEST = [
                 "GA_TOURNAMENT_SIZE": 5,
                 "GA_ELITISM_SIZE": 2,
                 "GA_IMPROVED_EVALUATION": True,
-
             },
             {
                 "GA_POPULATION_SIZE": 2000,
@@ -50,6 +56,23 @@ RUN_TEST = [
                 "GA_ELITISM_SIZE": 1,
                 "GA_IMPROVED_EVALUATION": False,
             },
+        ],
+        "TS_SETTINGS": [
+            {
+                "TS_MAX_ITERATIONS": 100,
+                "TS_TABU_SIZE": 10,
+                "TS_NEIGHBORHOOD_SIZE": 20,
+            },
+            {
+                "TS_MAX_ITERATIONS": 100,
+                "TS_TABU_SIZE": 10,
+                "TS_NEIGHBORHOOD_SIZE": 10,
+            },
+            {
+                "TS_MAX_ITERATIONS": 100,
+                "TS_TABU_SIZE": 20,
+                "TS_NEIGHBORHOOD_SIZE": 50,
+            }
         ]
     },
     {
@@ -85,6 +108,23 @@ RUN_TEST = [
                 "GA_ELITISM_SIZE": 1,
                 "GA_IMPROVED_EVALUATION": False,
             },
+        ],
+        "TS_SETTINGS": [
+            {
+                "TS_MAX_ITERATIONS": 100,
+                "TS_TABU_SIZE": 10,
+                "TS_NEIGHBORHOOD_SIZE": 20,
+            },
+            {
+                "TS_MAX_ITERATIONS": 100,
+                "TS_TABU_SIZE": 10,
+                "TS_NEIGHBORHOOD_SIZE": 10,
+            },
+            {
+                "TS_MAX_ITERATIONS": 100,
+                "TS_TABU_SIZE": 20,
+                "TS_NEIGHBORHOOD_SIZE": 50,
+            }
         ]
     }
 ]

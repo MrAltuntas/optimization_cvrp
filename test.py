@@ -75,20 +75,47 @@ class TestRunner:
                     'path': random_path
                 })
 
-            # Find best random solution
-            best_random = min(random_results, key=lambda x: x['movements'])
-            avg_random_time = np.mean([r['time'] for r in random_results])
+            # Calculate statistics for random algorithm
+            valid_random_runs = [r for r in random_results if r['valid']]
+            if valid_random_runs:
+                best_random = min(valid_random_runs, key=lambda x: x['movements'])
+                worst_random = max(valid_random_runs, key=lambda x: x['movements'])
+                avg_random_movements = np.mean([r['movements'] for r in valid_random_runs])
+                std_random_movements = np.std([r['movements'] for r in valid_random_runs])
+                avg_random_time = np.mean([r['time'] for r in random_results])
 
-            print(f"Best Valid: {best_random['valid']}, Best Movements: {best_random['movements']}, Best Path: {best_random['path']},   "
-                  f"Avg Time: {avg_random_time:.4f}s")
+                print(f"Best Valid: {best_random['valid']}, "
+                      f"Best Movements: {best_random['movements']}, "
+                      f"Worst Movements: {worst_random['movements']}, "
+                      f"Avg Movements: {avg_random_movements:.2f}, "
+                      f"Std Movements: {std_random_movements:.2f}, "
+                      f"Best Path: {best_random['path']}, "
+                      f"Avg Time: {avg_random_time:.4f}s")
 
-            test_results['methods']['random'] = {
-                'best_valid': best_random['valid'],
-                'best_path': best_random['path'],
-                'best_movements': best_random['movements'],
-                'avg_time': avg_random_time,
-                'all_runs': random_results
-            }
+                test_results['methods']['random'] = {
+                    'best_valid': best_random['valid'],
+                    'best_path': best_random['path'],
+                    'best_movements': best_random['movements'],
+                    'worst_movements': worst_random['movements'],
+                    'avg_movements': avg_random_movements,
+                    'std_movements': std_random_movements,
+                    'avg_time': avg_random_time,
+                    'all_runs': random_results
+                }
+            else:
+                avg_random_time = np.mean([r['time'] for r in random_results])
+                print(f"No valid solutions found, Avg Time: {avg_random_time:.4f}s")
+
+                test_results['methods']['random'] = {
+                    'best_valid': False,
+                    'best_path': None,
+                    'best_movements': float('inf'),
+                    'worst_movements': float('inf'),
+                    'avg_movements': float('inf'),
+                    'std_movements': 0,
+                    'avg_time': avg_random_time,
+                    'all_runs': random_results
+                }
 
             # Run Genetic algorithm with different settings
             test_results['methods']['genetic'] = []
@@ -145,10 +172,16 @@ class TestRunner:
 
                 if valid_runs:
                     best_ga = min(valid_runs, key=lambda x: x['movements'])
+                    worst_ga = max(valid_runs, key=lambda x: x['movements'])
+                    avg_ga_movements = np.mean([r['movements'] for r in valid_runs])
+                    std_ga_movements = np.std([r['movements'] for r in valid_runs])
                     avg_ga_time = np.mean([r['time'] for r in ga_results])
 
                     print(f"  Valid: {len(valid_runs)}/{self.num_runs}, "
                           f"Best Movements: {best_ga['movements']}, "
+                          f"Worst Movements: {worst_ga['movements']}, "
+                          f"Avg Movements: {avg_ga_movements:.2f}, "
+                          f"Std Movements: {std_ga_movements:.2f}, "
                           f"Best Path: {best_ga['path']}, "
                           f"Avg Time: {avg_ga_time:.4f}s")
 
@@ -158,6 +191,9 @@ class TestRunner:
                         'settings': ga_setting,
                         'best_valid': best_ga['valid'],
                         'best_movements': best_ga['movements'],
+                        'worst_movements': worst_ga['movements'],
+                        'avg_movements': avg_ga_movements,
+                        'std_movements': std_ga_movements,
                         'avg_time': avg_ga_time,
                         'success_rate': len(valid_runs) / self.num_runs,
                         'all_runs': ga_results
@@ -171,6 +207,10 @@ class TestRunner:
                         'best_path': None,
                         'settings': ga_setting,
                         'best_valid': False,
+                        'best_movements': float('inf'),
+                        'worst_movements': float('inf'),
+                        'avg_movements': float('inf'),
+                        'std_movements': 0,
                         'avg_time': avg_ga_time,
                         'success_rate': 0,
                         'all_runs': ga_results
@@ -227,10 +267,16 @@ class TestRunner:
 
                 if valid_runs:
                     best_ts = min(valid_runs, key=lambda x: x['movements'])
+                    worst_ts = max(valid_runs, key=lambda x: x['movements'])
+                    avg_ts_movements = np.mean([r['movements'] for r in valid_runs])
+                    std_ts_movements = np.std([r['movements'] for r in valid_runs])
                     avg_ts_time = np.mean([r['time'] for r in ts_results])
 
                     print(f"  Valid: {len(valid_runs)}/{self.num_runs}, "
                           f"Best Movements: {best_ts['movements']}, "
+                          f"Worst Movements: {worst_ts['movements']}, "
+                          f"Avg Movements: {avg_ts_movements:.2f}, "
+                          f"Std Movements: {std_ts_movements:.2f}, "
                           f"Best Path: {best_ts['path']}, "
                           f"Avg Time: {avg_ts_time:.4f}s")
 
@@ -240,6 +286,9 @@ class TestRunner:
                         'best_path': best_ts['path'],
                         'best_valid': best_ts['valid'],
                         'best_movements': best_ts['movements'],
+                        'worst_movements': worst_ts['movements'],
+                        'avg_movements': avg_ts_movements,
+                        'std_movements': std_ts_movements,
                         'avg_time': avg_ts_time,
                         'success_rate': len(valid_runs) / self.num_runs,
                         'all_runs': ts_results
@@ -253,6 +302,10 @@ class TestRunner:
                         'settings': ts_setting,
                         'best_path': None,
                         'best_valid': False,
+                        'best_movements': float('inf'),
+                        'worst_movements': float('inf'),
+                        'avg_movements': float('inf'),
+                        'std_movements': 0,
                         'avg_time': avg_ts_time,
                         'success_rate': 0,
                         'all_runs': ts_results
@@ -281,17 +334,28 @@ class TestRunner:
         # Random algorithm
         random = test_results['methods']['random']
 
-        print(f"Random: Movements={random['best_movements']}, "
-              f"Best path={random['best_path']}, "
-              f"Time={random['avg_time']:.4f}s")
+        if random['best_valid']:
+            print(f"Random: Best={random['best_movements']}, "
+                  f"Worst={random['worst_movements']}, "
+                  f"Avg={random['avg_movements']:.2f}, "
+                  f"Std={random['std_movements']:.2f}, "
+                  f"Best path={random['best_path']}, "
+                  f"Time={random['avg_time']:.4f}s")
+        else:
+            print(f"Random: No valid solution, Time={random['avg_time']:.4f}s")
 
         # GA algorithms
         for ga in test_results['methods']['genetic']:
             config_id = ga['config_id']
 
             if ga['best_valid']:
-                print(f"GA Config {config_id}: Movements={ga['best_movements']}, Best path={ga['best_path']},  "
-                      f"Time={ga['avg_time']:.4f}s, Success={ga['success_rate']*100:.1f}%")
+                print(f"GA Config {config_id}: Best={ga['best_movements']}, "
+                      f"Worst={ga['worst_movements']}, "
+                      f"Avg={ga['avg_movements']:.2f}, "
+                      f"Std={ga['std_movements']:.2f}, "
+                      f"Best path={ga['best_path']}, "
+                      f"Time={ga['avg_time']:.4f}s, "
+                      f"Success={ga['success_rate']*100:.1f}%")
             else:
                 print(f"GA Config {config_id}: No valid solution, Time={ga['avg_time']:.4f}s")
 
@@ -300,8 +364,13 @@ class TestRunner:
             config_id = ts['config_id']
 
             if ts['best_valid']:
-                print(f"TS Config {config_id}: Movements={ts['best_movements']}, Best path={ts['best_path']},  "
-                      f"Time={ts['avg_time']:.4f}s, Success={ts['success_rate']*100:.1f}%")
+                print(f"TS Config {config_id}: Best={ts['best_movements']}, "
+                      f"Worst={ts['worst_movements']}, "
+                      f"Avg={ts['avg_movements']:.2f}, "
+                      f"Std={ts['std_movements']:.2f}, "
+                      f"Best path={ts['best_path']}, "
+                      f"Time={ts['avg_time']:.4f}s, "
+                      f"Success={ts['success_rate']*100:.1f}%")
             else:
                 print(f"TS Config {config_id}: No valid solution, Time={ts['avg_time']:.4f}s")
 
@@ -338,6 +407,9 @@ class TestRunner:
                 'distance': distance,
                 'capacity': capacity,
                 'best_movements': greedy_movements,
+                'worst_movements': 'N/A',  # Deterministic, no worst
+                'avg_movements': greedy_movements,  # Same as best for greedy
+                'std_movements': 0,  # No variation for greedy
                 'time': greedy['time'],
                 'best_path': greedy['path'],
                 'success_rate': '100%',
@@ -347,18 +419,38 @@ class TestRunner:
             # Add random row
             random = test_result['methods']['random']
 
-            comparison_rows.append({
-                'test_id': test_id,
-                'algorithm': 'Random Algorithm',
-                'cities': cities,
-                'distance': distance,
-                'capacity': capacity,
-                'best_movements': random['best_movements'],
-                'best_path': random['best_path'],
-                'time': random['avg_time'],
-                'success_rate': f"{sum(1 for r in random['all_runs'] if r['valid']) / len(random['all_runs']) * 100:.1f}%",
-                'parameters': 'N/A'
-            })
+            if random['best_valid']:
+                comparison_rows.append({
+                    'test_id': test_id,
+                    'algorithm': 'Random Algorithm',
+                    'cities': cities,
+                    'distance': distance,
+                    'capacity': capacity,
+                    'best_movements': random['best_movements'],
+                    'worst_movements': random['worst_movements'],
+                    'avg_movements': random['avg_movements'],
+                    'std_movements': random['std_movements'],
+                    'best_path': random['best_path'],
+                    'time': random['avg_time'],
+                    'success_rate': f"{sum(1 for r in random['all_runs'] if r['valid']) / len(random['all_runs']) * 100:.1f}%",
+                    'parameters': 'N/A'
+                })
+            else:
+                comparison_rows.append({
+                    'test_id': test_id,
+                    'algorithm': 'Random Algorithm',
+                    'cities': cities,
+                    'distance': distance,
+                    'capacity': capacity,
+                    'best_movements': 'N/A',
+                    'worst_movements': 'N/A',
+                    'avg_movements': 'N/A',
+                    'std_movements': 'N/A',
+                    'best_path': 'N/A',
+                    'time': random['avg_time'],
+                    'success_rate': '0.0%',
+                    'parameters': 'N/A'
+                })
 
             # Add GA rows
             for ga_result in test_result['methods']['genetic']:
@@ -366,7 +458,6 @@ class TestRunner:
                 settings = ga_result['settings']
 
                 if ga_result['best_valid']:
-
                     params = f"Pop={settings['GA_POPULATION_SIZE']}, " \
                              f"Gen={settings['GA_GENERATIONS']}, " \
                              f"Cx={settings['GA_CROSSOVER_RATE']}, " \
@@ -382,6 +473,9 @@ class TestRunner:
                         'distance': distance,
                         'capacity': capacity,
                         'best_movements': ga_result['best_movements'],
+                        'worst_movements': ga_result['worst_movements'],
+                        'avg_movements': ga_result['avg_movements'],
+                        'std_movements': ga_result['std_movements'],
                         'best_path': ga_result['best_path'],
                         'time': ga_result['avg_time'],
                         'success_rate': f"{ga_result['success_rate'] * 100:.1f}%",
@@ -403,6 +497,9 @@ class TestRunner:
                         'distance': distance,
                         'capacity': capacity,
                         'best_movements': 'N/A',
+                        'worst_movements': 'N/A',
+                        'avg_movements': 'N/A',
+                        'std_movements': 'N/A',
                         'best_path': 'N/A',
                         'time': ga_result['avg_time'],
                         'success_rate': '0.0%',
@@ -415,7 +512,6 @@ class TestRunner:
                 settings = ts_result['settings']
 
                 if ts_result['best_valid']:
-
                     params = f"Iter={settings['TS_MAX_ITERATIONS']}, " \
                              f"TabuSize={settings['TS_TABU_SIZE']}, " \
                              f"NeighSize={settings['TS_NEIGHBORHOOD_SIZE']}"
@@ -427,6 +523,9 @@ class TestRunner:
                         'distance': distance,
                         'capacity': capacity,
                         'best_movements': ts_result['best_movements'],
+                        'worst_movements': ts_result['worst_movements'],
+                        'avg_movements': ts_result['avg_movements'],
+                        'std_movements': ts_result['std_movements'],
                         'best_path': ts_result['best_path'],
                         'time': ts_result['avg_time'],
                         'success_rate': f"{ts_result['success_rate'] * 100:.1f}%",
@@ -444,6 +543,9 @@ class TestRunner:
                         'distance': distance,
                         'capacity': capacity,
                         'best_movements': 'N/A',
+                        'worst_movements': 'N/A',
+                        'avg_movements': 'N/A',
+                        'std_movements': 'N/A',
                         'best_path': 'N/A',
                         'time': ts_result['avg_time'],
                         'success_rate': '0.0%',

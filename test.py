@@ -147,7 +147,7 @@ class TestRunner:
                     )
 
                     start_time = time.time()
-                    ga_path = ga_solver.solve()
+                    ga_path, solution_generation_count = ga_solver.solve()
                     run_time = time.time() - start_time
 
                     if ga_path is not None:
@@ -156,14 +156,16 @@ class TestRunner:
                             'valid': valid,
                             'movements': movements,
                             'time': run_time,
-                            'path': ga_path
+                            'path': ga_path,
+                            'solution_generation_count': solution_generation_count,
                         })
                     else:
                         ga_results.append({
                             'valid': False,
                             'movements': float('inf'),
                             'time': run_time,
-                            'path': None
+                            'path': None,
+                            'solution_generation_count': solution_generation_count,
                         })
 
                 print(" " * 30, end="\r")  # Clear the progress line
@@ -174,6 +176,10 @@ class TestRunner:
                 if valid_runs:
                     best_ga = min(valid_runs, key=lambda x: x['movements'])
                     worst_ga = max(valid_runs, key=lambda x: x['movements'])
+                    best_gen_count = min(valid_runs, key=lambda x: x['solution_generation_count'])
+                    worst_gen_count = max(valid_runs, key=lambda x: x['solution_generation_count'])
+                    avg_gen_count = np.mean([r['solution_generation_count'] for r in valid_runs])
+                    std_gen_count = np.std([r['solution_generation_count'] for r in valid_runs])
                     avg_ga_movements = np.mean([r['movements'] for r in valid_runs])
                     std_ga_movements = np.std([r['movements'] for r in valid_runs])
                     avg_ga_time = np.mean([r['time'] for r in ga_results])
@@ -184,6 +190,10 @@ class TestRunner:
                           f"Avg Movements: {avg_ga_movements:.2f}, "
                           f"Std Movements: {std_ga_movements:.2f}, "
                           f"Best Path: {best_ga['path']}, "
+                          f"Best Generation Count: {best_gen_count['solution_generation_count']}, "
+                          f"Worst Generation Count: {worst_gen_count['solution_generation_count']}, "
+                          f"Avg Generation Count: {avg_gen_count}, "
+                          f"Std Generation Count: {std_gen_count}, "
                           f"Avg Time: {avg_ga_time:.4f}s")
 
                     ga_config_result = {
@@ -195,6 +205,10 @@ class TestRunner:
                         'worst_movements': worst_ga['movements'],
                         'avg_movements': avg_ga_movements,
                         'std_movements': std_ga_movements,
+                        'best_gen_count': best_gen_count['solution_generation_count'],
+                        'worst_gen_count': worst_gen_count['solution_generation_count'],
+                        'avg_gen_count': avg_gen_count,
+                        'std_gen_count': std_gen_count,
                         'avg_time': avg_ga_time,
                         'success_rate': len(valid_runs) / self.num_runs,
                         'all_runs': ga_results
@@ -212,6 +226,10 @@ class TestRunner:
                         'worst_movements': float('inf'),
                         'avg_movements': float('inf'),
                         'std_movements': 0,
+                        'best_gen_count': 0,
+                        'worst_gen_count': 0,
+                        'avg_gen_count': 0,
+                        'std_gen_count': 0,
                         'avg_time': avg_ga_time,
                         'success_rate': 0,
                         'all_runs': ga_results
@@ -355,6 +373,10 @@ class TestRunner:
                       f"Avg={ga['avg_movements']:.2f}, "
                       f"Std={ga['std_movements']:.2f}, "
                       f"Best path={ga['best_path']}, "
+                      f"Best Generation Count={ga['best_gen_count']}, "
+                      f"Worst Generation Count={ga['worst_gen_count']}, "
+                      f"Avg Generation Count={ga['avg_gen_count']}, "
+                      f"Std Generation Count={ga['std_gen_count']}, "
                       f"Time={ga['avg_time']:.4f}s, "
                       f"Success={ga['success_rate']*100:.1f}%")
             else:
@@ -414,6 +436,10 @@ class TestRunner:
                 'avg_movements': greedy_movements,  # Same as best for greedy
                 'std_movements': 0,  # No variation for greedy
                 'time': greedy['time'],
+                'best_gen_count': 'N/A',
+                'worst_gen_count': 'N/A',
+                'avg_gen_count': 'N/A',
+                'std_gen_count': 'N/A',
                 'best_path': greedy['path'],
                 'success_rate': '100%',
                 'parameters': 'N/A'
@@ -434,6 +460,10 @@ class TestRunner:
                     'worst_movements': random['worst_movements'],
                     'avg_movements': random['avg_movements'],
                     'std_movements': random['std_movements'],
+                    'best_gen_count': 'N/A',
+                    'worst_gen_count': 'N/A',
+                    'avg_gen_count': 'N/A',
+                    'std_gen_count': 'N/A',
                     'best_path': random['best_path'],
                     'time': random['avg_time'],
                     'success_rate': f"{sum(1 for r in random['all_runs'] if r['valid']) / len(random['all_runs']) * 100:.1f}%",
@@ -451,6 +481,10 @@ class TestRunner:
                     'worst_movements': 'N/A',
                     'avg_movements': 'N/A',
                     'std_movements': 'N/A',
+                    'best_gen_count': 'N/A',
+                    'worst_gen_count': 'N/A',
+                    'avg_gen_count': 'N/A',
+                    'std_gen_count': 'N/A',
                     'best_path': 'N/A',
                     'time': random['avg_time'],
                     'success_rate': '0.0%',
@@ -482,6 +516,10 @@ class TestRunner:
                         'worst_movements': ga_result['worst_movements'],
                         'avg_movements': ga_result['avg_movements'],
                         'std_movements': ga_result['std_movements'],
+                        'best_gen_count': ga_result['best_gen_count'],
+                        'worst_gen_count': ga_result['worst_gen_count'],
+                        'avg_gen_count': ga_result['avg_gen_count'],
+                        'std_gen_count': ga_result['std_gen_count'],
                         'best_path': ga_result['best_path'],
                         'time': ga_result['avg_time'],
                         'success_rate': f"{ga_result['success_rate'] * 100:.1f}%",
@@ -507,6 +545,10 @@ class TestRunner:
                         'worst_movements': 'N/A',
                         'avg_movements': 'N/A',
                         'std_movements': 'N/A',
+                        'best_gen_count': 'N/A',
+                        'worst_gen_count': 'N/A',
+                        'avg_gen_count': 'N/A',
+                        'std_gen_count': 'N/A',
                         'best_path': 'N/A',
                         'time': ga_result['avg_time'],
                         'success_rate': '0.0%',

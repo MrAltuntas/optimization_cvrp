@@ -7,7 +7,7 @@ CVRP_CAPACITY = 100
 
 # Genetic Algorithm Settings
 GA_POPULATION_SIZE = 10000
-GA_GENERATIONS = 500
+GA_GENERATIONS = 300
 GA_CROSSOVER_RATE = 0.7
 GA_MUTATION_RATE = 0.1
 GA_TOURNAMENT_SIZE = 5
@@ -33,42 +33,42 @@ RUN_TEST = [
         "NAME": "A-n32-k5",
         "CVRP_NUMBER_OF_CITIES": 32,
         "CVRP_DEPOT_POSITION": 0,
-        "CVRP_DISTANCE_BETWEEN_CITIES": 10,  # Adjusted for larger problem
-        "CVRP_CAPACITY": 100,  # Standard capacity in benchmarks
+        "CVRP_DISTANCE_BETWEEN_CITIES": 10,
+        "CVRP_CAPACITY": 100,
         "GA_SETTINGS": [
-            # Standard parameter configuration
+            # Base configuration - based on your successful settings
             {
-                "GA_POPULATION_SIZE": 100,
-                "GA_GENERATIONS": 100,
+                "GA_POPULATION_SIZE": 10000,
+                "GA_GENERATIONS": 500,
                 "GA_CROSSOVER_RATE": 0.7,
                 "GA_MUTATION_RATE": 0.1,
                 "GA_TOURNAMENT_SIZE": 5,
                 "GA_ELITISM_SIZE": 2,
                 "GA_IMPROVED_EVALUATION": True,
             },
-            # Testing increased population size
+            # Testing different tournament size
             {
-                "GA_POPULATION_SIZE": 200,
-                "GA_GENERATIONS": 100,
+                "GA_POPULATION_SIZE": 10000,
+                "GA_GENERATIONS": 500,
                 "GA_CROSSOVER_RATE": 0.7,
                 "GA_MUTATION_RATE": 0.1,
-                "GA_TOURNAMENT_SIZE": 5,
+                "GA_TOURNAMENT_SIZE": 10,
                 "GA_ELITISM_SIZE": 2,
                 "GA_IMPROVED_EVALUATION": True,
             },
-            # Testing increased mutation rate
+            # Testing higher mutation rate
             {
-                "GA_POPULATION_SIZE": 100,
-                "GA_GENERATIONS": 100,
+                "GA_POPULATION_SIZE": 10000,
+                "GA_GENERATIONS": 500,
                 "GA_CROSSOVER_RATE": 0.7,
                 "GA_MUTATION_RATE": 0.2,
-                "GA_TOURNAMENT_SIZE": 5,
                 "GA_ELITISM_SIZE": 2,
+                "GA_TOURNAMENT_SIZE": 5,
                 "GA_IMPROVED_EVALUATION": True,
             },
         ],
         "TS_SETTINGS": [
-            # Standard TS configuration
+            # Base TS configuration
             {
                 "TS_MAX_ITERATIONS": 100,
                 "TS_TABU_SIZE": 10,
@@ -76,9 +76,9 @@ RUN_TEST = [
             },
             # Testing larger tabu size
             {
-                "TS_MAX_ITERATIONS": 100,
+                "TS_MAX_ITERATIONS": 200,
                 "TS_TABU_SIZE": 20,
-                "TS_NEIGHBORHOOD_SIZE": 20,
+                "TS_NEIGHBORHOOD_SIZE": 30,
             },
         ]
     },
@@ -91,29 +91,39 @@ RUN_TEST = [
         "CVRP_DISTANCE_BETWEEN_CITIES": 10,
         "CVRP_CAPACITY": 100,
         "GA_SETTINGS": [
-            # Standard parameter configuration
+            # Base configuration
             {
-                "GA_POPULATION_SIZE": 100,
-                "GA_GENERATIONS": 100,
+                "GA_POPULATION_SIZE": 10000,
+                "GA_GENERATIONS": 500,
                 "GA_CROSSOVER_RATE": 0.7,
                 "GA_MUTATION_RATE": 0.1,
                 "GA_TOURNAMENT_SIZE": 5,
                 "GA_ELITISM_SIZE": 2,
                 "GA_IMPROVED_EVALUATION": True,
             },
-            # Testing larger tournament size (selection pressure)
+            # Testing larger population
             {
-                "GA_POPULATION_SIZE": 100,
-                "GA_GENERATIONS": 100,
+                "GA_POPULATION_SIZE": 15000,
+                "GA_GENERATIONS": 500,
                 "GA_CROSSOVER_RATE": 0.7,
                 "GA_MUTATION_RATE": 0.1,
-                "GA_TOURNAMENT_SIZE": 10,
+                "GA_TOURNAMENT_SIZE": 5,
+                "GA_ELITISM_SIZE": 2,
+                "GA_IMPROVED_EVALUATION": True,
+            },
+            # Testing different crossover rate
+            {
+                "GA_POPULATION_SIZE": 10000,
+                "GA_GENERATIONS": 500,
+                "GA_CROSSOVER_RATE": 0.5,
+                "GA_MUTATION_RATE": 0.1,
+                "GA_TOURNAMENT_SIZE": 5,
                 "GA_ELITISM_SIZE": 2,
                 "GA_IMPROVED_EVALUATION": True,
             },
         ],
         "TS_SETTINGS": [
-            # Standard TS configuration
+            # Base TS configuration
             {
                 "TS_MAX_ITERATIONS": 100,
                 "TS_TABU_SIZE": 10,
@@ -136,29 +146,39 @@ RUN_TEST = [
         "CVRP_DISTANCE_BETWEEN_CITIES": 10,
         "CVRP_CAPACITY": 100,
         "GA_SETTINGS": [
-            # Standard parameter configuration
+            # Base configuration
             {
-                "GA_POPULATION_SIZE": 100,
-                "GA_GENERATIONS": 100,
+                "GA_POPULATION_SIZE": 10000,
+                "GA_GENERATIONS": 500,
                 "GA_CROSSOVER_RATE": 0.7,
                 "GA_MUTATION_RATE": 0.1,
                 "GA_TOURNAMENT_SIZE": 5,
                 "GA_ELITISM_SIZE": 2,
                 "GA_IMPROVED_EVALUATION": True,
             },
-            # Testing different crossover rate
+            # Testing elitism effect
             {
-                "GA_POPULATION_SIZE": 100,
-                "GA_GENERATIONS": 100,
-                "GA_CROSSOVER_RATE": 0.5,
+                "GA_POPULATION_SIZE": 10000,
+                "GA_GENERATIONS": 500,
+                "GA_CROSSOVER_RATE": 0.7,
+                "GA_MUTATION_RATE": 0.1,
+                "GA_TOURNAMENT_SIZE": 5,
+                "GA_ELITISM_SIZE": 5,
+                "GA_IMPROVED_EVALUATION": True,
+            },
+            # Testing without improved evaluation
+            {
+                "GA_POPULATION_SIZE": 10000,
+                "GA_GENERATIONS": 500,
+                "GA_CROSSOVER_RATE": 0.7,
                 "GA_MUTATION_RATE": 0.1,
                 "GA_TOURNAMENT_SIZE": 5,
                 "GA_ELITISM_SIZE": 2,
-                "GA_IMPROVED_EVALUATION": True,
+                "GA_IMPROVED_EVALUATION": False,
             },
         ],
         "TS_SETTINGS": [
-            # Standard TS configuration
+            # Base TS configuration
             {
                 "TS_MAX_ITERATIONS": 100,
                 "TS_TABU_SIZE": 10,
@@ -181,20 +201,20 @@ RUN_TEST = [
         "CVRP_DISTANCE_BETWEEN_CITIES": 10,
         "CVRP_CAPACITY": 100,
         "GA_SETTINGS": [
-            # Standard parameter configuration
+            # Base configuration
             {
-                "GA_POPULATION_SIZE": 100,
-                "GA_GENERATIONS": 100,
+                "GA_POPULATION_SIZE": 12000,
+                "GA_GENERATIONS": 600,
                 "GA_CROSSOVER_RATE": 0.7,
                 "GA_MUTATION_RATE": 0.1,
                 "GA_TOURNAMENT_SIZE": 5,
                 "GA_ELITISM_SIZE": 2,
                 "GA_IMPROVED_EVALUATION": True,
             },
-            # Testing more generations
+            # Testing increased generations
             {
-                "GA_POPULATION_SIZE": 100,
-                "GA_GENERATIONS": 200,
+                "GA_POPULATION_SIZE": 12000,
+                "GA_GENERATIONS": 800,
                 "GA_CROSSOVER_RATE": 0.7,
                 "GA_MUTATION_RATE": 0.1,
                 "GA_TOURNAMENT_SIZE": 5,
@@ -203,11 +223,17 @@ RUN_TEST = [
             },
         ],
         "TS_SETTINGS": [
-            # Standard TS configuration
+            # Base TS configuration
             {
                 "TS_MAX_ITERATIONS": 100,
                 "TS_TABU_SIZE": 10,
                 "TS_NEIGHBORHOOD_SIZE": 20,
+            },
+            # Testing combined parameter changes
+            {
+                "TS_MAX_ITERATIONS": 150,
+                "TS_TABU_SIZE": 15,
+                "TS_NEIGHBORHOOD_SIZE": 30,
             },
         ]
     },
@@ -220,33 +246,39 @@ RUN_TEST = [
         "CVRP_DISTANCE_BETWEEN_CITIES": 10,
         "CVRP_CAPACITY": 100,
         "GA_SETTINGS": [
-            # Standard parameter configuration
+            # Base configuration
             {
-                "GA_POPULATION_SIZE": 100,
-                "GA_GENERATIONS": 100,
+                "GA_POPULATION_SIZE": 15000,
+                "GA_GENERATIONS": 600,
                 "GA_CROSSOVER_RATE": 0.7,
                 "GA_MUTATION_RATE": 0.1,
                 "GA_TOURNAMENT_SIZE": 5,
                 "GA_ELITISM_SIZE": 2,
                 "GA_IMPROVED_EVALUATION": True,
             },
-            # Testing different elitism size
+            # Testing combined parameter optimizations
             {
-                "GA_POPULATION_SIZE": 100,
-                "GA_GENERATIONS": 100,
-                "GA_CROSSOVER_RATE": 0.7,
-                "GA_MUTATION_RATE": 0.1,
-                "GA_TOURNAMENT_SIZE": 5,
-                "GA_ELITISM_SIZE": 5,
+                "GA_POPULATION_SIZE": 15000,
+                "GA_GENERATIONS": 600,
+                "GA_CROSSOVER_RATE": 0.8,
+                "GA_MUTATION_RATE": 0.15,
+                "GA_TOURNAMENT_SIZE": 7,
+                "GA_ELITISM_SIZE": 3,
                 "GA_IMPROVED_EVALUATION": True,
             },
         ],
         "TS_SETTINGS": [
-            # Standard TS configuration
+            # Base TS configuration
             {
-                "TS_MAX_ITERATIONS": 100,
-                "TS_TABU_SIZE": 10,
-                "TS_NEIGHBORHOOD_SIZE": 20,
+                "TS_MAX_ITERATIONS": 150,
+                "TS_TABU_SIZE": 15,
+                "TS_NEIGHBORHOOD_SIZE": 25,
+            },
+            # Testing more aggressive settings
+            {
+                "TS_MAX_ITERATIONS": 200,
+                "TS_TABU_SIZE": 20,
+                "TS_NEIGHBORHOOD_SIZE": 40,
             },
         ]
     },
@@ -261,33 +293,39 @@ RUN_TEST = [
         "CVRP_DISTANCE_BETWEEN_CITIES": 10,
         "CVRP_CAPACITY": 100,
         "GA_SETTINGS": [
-            # Standard parameter configuration
+            # Base configuration with larger population for hard instance
             {
-                "GA_POPULATION_SIZE": 100,
-                "GA_GENERATIONS": 100,
+                "GA_POPULATION_SIZE": 20000,
+                "GA_GENERATIONS": 800,
                 "GA_CROSSOVER_RATE": 0.7,
                 "GA_MUTATION_RATE": 0.1,
                 "GA_TOURNAMENT_SIZE": 5,
                 "GA_ELITISM_SIZE": 2,
                 "GA_IMPROVED_EVALUATION": True,
             },
-            # Testing evaluation method
+            # Testing very large population
             {
-                "GA_POPULATION_SIZE": 100,
-                "GA_GENERATIONS": 100,
+                "GA_POPULATION_SIZE": 25000,
+                "GA_GENERATIONS": 800,
                 "GA_CROSSOVER_RATE": 0.7,
                 "GA_MUTATION_RATE": 0.1,
                 "GA_TOURNAMENT_SIZE": 5,
                 "GA_ELITISM_SIZE": 2,
-                "GA_IMPROVED_EVALUATION": False,  # Testing without improved evaluation
+                "GA_IMPROVED_EVALUATION": True,
             },
         ],
         "TS_SETTINGS": [
-            # Standard TS configuration
+            # Base TS configuration for hard instance
             {
-                "TS_MAX_ITERATIONS": 100,
-                "TS_TABU_SIZE": 10,
-                "TS_NEIGHBORHOOD_SIZE": 20,
+                "TS_MAX_ITERATIONS": 200,
+                "TS_TABU_SIZE": 15,
+                "TS_NEIGHBORHOOD_SIZE": 30,
+            },
+            # Testing more intensive search
+            {
+                "TS_MAX_ITERATIONS": 300,
+                "TS_TABU_SIZE": 20,
+                "TS_NEIGHBORHOOD_SIZE": 50,
             },
         ]
     },
@@ -300,39 +338,39 @@ RUN_TEST = [
         "CVRP_DISTANCE_BETWEEN_CITIES": 10,
         "CVRP_CAPACITY": 100,
         "GA_SETTINGS": [
-            # Standard parameter configuration
+            # Base configuration with larger population for hard instance
             {
-                "GA_POPULATION_SIZE": 100,
-                "GA_GENERATIONS": 100,
+                "GA_POPULATION_SIZE": 25000,
+                "GA_GENERATIONS": 1000,
                 "GA_CROSSOVER_RATE": 0.7,
                 "GA_MUTATION_RATE": 0.1,
                 "GA_TOURNAMENT_SIZE": 5,
                 "GA_ELITISM_SIZE": 2,
                 "GA_IMPROVED_EVALUATION": True,
             },
-            # Testing larger population and more generations
+            # Testing different parameter balance
             {
-                "GA_POPULATION_SIZE": 200,
-                "GA_GENERATIONS": 200,
-                "GA_CROSSOVER_RATE": 0.7,
-                "GA_MUTATION_RATE": 0.1,
-                "GA_TOURNAMENT_SIZE": 5,
-                "GA_ELITISM_SIZE": 2,
+                "GA_POPULATION_SIZE": 20000,
+                "GA_GENERATIONS": 1200,
+                "GA_CROSSOVER_RATE": 0.75,
+                "GA_MUTATION_RATE": 0.12,
+                "GA_TOURNAMENT_SIZE": 6,
+                "GA_ELITISM_SIZE": 3,
                 "GA_IMPROVED_EVALUATION": True,
             },
         ],
         "TS_SETTINGS": [
-            # Standard TS configuration
+            # Base TS configuration for hard instance
             {
-                "TS_MAX_ITERATIONS": 100,
-                "TS_TABU_SIZE": 10,
-                "TS_NEIGHBORHOOD_SIZE": 20,
-            },
-            # Testing comprehensive parameter changes
-            {
-                "TS_MAX_ITERATIONS": 200,
+                "TS_MAX_ITERATIONS": 250,
                 "TS_TABU_SIZE": 20,
                 "TS_NEIGHBORHOOD_SIZE": 40,
+            },
+            # Intensive search for hard instance
+            {
+                "TS_MAX_ITERATIONS": 400,
+                "TS_TABU_SIZE": 25,
+                "TS_NEIGHBORHOOD_SIZE": 60,
             },
         ]
     }

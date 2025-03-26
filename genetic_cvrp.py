@@ -13,6 +13,7 @@ class GeneticCVRP:
         self.tournament_size = tournament_size
         self.elitism_count = elitism_count
         self.best_solution = None
+        self.best_solution_generation_count = None
         self.best_fitness = float('inf')
         self.improved_evaluation = improved_evaluation
 
@@ -308,6 +309,7 @@ class GeneticCVRP:
             if current_best_fitness < self.best_fitness:
                 self.best_solution = current_best.copy()
                 self.best_fitness = current_best_fitness
+                self.best_solution_generation_count = generation
 
             # Create new population
             new_population = []
@@ -340,11 +342,12 @@ class GeneticCVRP:
 
         # Prepare final solution with depot added if needed
         solution = self.best_solution.copy()
-        return solution
+        solution_generation_count = self.best_solution_generation_count
+        return solution, solution_generation_count
 
     def solve(self):
         """
         Solves the CVRP problem and returns the best path found.
         """
-        path = self.evolve()
-        return path
+        path, solution_generation_count = self.evolve()
+        return path, solution_generation_count

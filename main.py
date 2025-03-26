@@ -62,12 +62,13 @@ else:
 # Genetic Algorithm
 print("3. Genetic Algorithm:")
 start_time = time.time()
-ga_path = ga_solver.solve()
+ga_path, solution_generation_count = ga_solver.solve()
 ga_time = time.time() - start_time
 
 if ga_path is not None:
     ga_movements, ga_valid = cvrp_problem.is_valid_path(ga_path)
     print(f"Valid: {ga_valid}, Movements: {ga_movements}, Time: {ga_time:.4f}s")
     print(f"Path: {ga_path}")
+    print(f"Solution Generation Number: {solution_generation_count}")
 else:
     print(f"Couldn't find a solution, Time: {ga_time:.4f}s")

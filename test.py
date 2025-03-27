@@ -9,6 +9,7 @@ import pandas as pd
 import os
 import numpy as np
 from datetime import datetime
+from visualization import VisualizationTools
 
 class TestRunner:
     def __init__(self, test_configs=None):
@@ -611,6 +612,22 @@ class TestRunner:
         return comparison_file
 
 if __name__ == "__main__":
+
     runner = TestRunner()
     results = runner.run_tests()
-    runner.export_comparison_csv()
+    csv_file_path = runner.export_comparison_csv()
+
+    if csv_file_path:
+        print(f"\n{'-'*20} GENERATING VISUALIZATIONS {'-'*20}")
+        print(f"Reading data from: {csv_file_path}")
+
+        # Initialize visualization tool with the generated CSV file
+        viz_tool = VisualizationTools(csv_file_path)
+
+        # Generate all charts
+        plots_dir = viz_tool.generate_all_charts()
+        print(f"All visualizations saved to: {plots_dir}")
+
+        print(f"\n{'-'*20} VISUALIZATION COMPLETE {'-'*20}")
+    else:
+        print("No CSV file was generated. Cannot create visualizations.")

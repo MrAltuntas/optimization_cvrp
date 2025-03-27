@@ -338,11 +338,12 @@ class GeneticCVRP:
 
         if self.best_solution is None:
             print("Warning: No valid solution found")
-            return None
+            return None, self.best_solution_generation_count
 
         # Prepare final solution with depot added if needed
         solution = self.best_solution.copy()
         solution_generation_count = self.best_solution_generation_count
+
         return solution, solution_generation_count
 
     def solve(self):

@@ -18,6 +18,12 @@ git clone https://github.com/MrAltuntas/optimization_cvrp.git
 cd optimization_cvrp
 ```
 
+### Install dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
 ### Requirements
 
 - Python 3.6+
@@ -82,34 +88,34 @@ For comparing multiple algorithm configurations, use the `RUN_TEST` array:
 RUN_TEST_COUNT = 10  # Number of runs per configuration
 
 RUN_TEST = [
-    {
-        "NAME": "A-n32-k5",
-        "CVRP_NUMBER_OF_CITIES": 32,
-        "CVRP_DEPOT_POSITION": 0,
-        "CVRP_DISTANCE_BETWEEN_CITIES": 10,
-        "CVRP_CAPACITY": 100,
-        "GA_SETTINGS": [
-            # First GA configuration
-            {
-                "GA_POPULATION_SIZE": 10000,
-                "GA_GENERATIONS": 500,
-                "GA_CROSSOVER_RATE": 0.7, 
-                "GA_MUTATION_RATE": 0.1,
-                "GA_TOURNAMENT_SIZE": 5,
-                "GA_ELITISM_SIZE": 2,
-                "GA_IMPROVED_EVALUATION": True,
-            },
-            # You can add more GA configurations here
-        ],
-        "TS_SETTINGS": [
-            # Tabu Search configuration
-            {
-                "TS_MAX_ITERATIONS": 100,
-                "TS_TABU_SIZE": 10, 
-                "TS_NEIGHBORHOOD_SIZE": 20,
-            }
-        ]
-    }
+   {
+      "NAME": "A-n32-k5",
+      "CVRP_NUMBER_OF_CITIES": 32,
+      "CVRP_DEPOT_POSITION": 0,
+      "CVRP_DISTANCE_BETWEEN_CITIES": 10,
+      "CVRP_CAPACITY": 100,
+      "GA_SETTINGS": [
+         # First GA configuration
+         {
+            "GA_POPULATION_SIZE": 10000,
+            "GA_GENERATIONS": 500,
+            "GA_CROSSOVER_RATE": 0.7,
+            "GA_MUTATION_RATE": 0.1,
+            "GA_TOURNAMENT_SIZE": 5,
+            "GA_ELITISM_SIZE": 2,
+            "GA_IMPROVED_EVALUATION": True,
+         },
+         # You can add more GA configurations here
+      ],
+      "TS_SETTINGS": [
+         # Tabu Search configuration
+         {
+            "TS_MAX_ITERATIONS": 100,
+            "TS_TABU_SIZE": 10,
+            "TS_NEIGHBORHOOD_SIZE": 20,
+         }
+      ]
+   }
 ]
 ```
 

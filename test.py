@@ -148,7 +148,8 @@ class TestRunner:
                     )
 
                     start_time = time.time()
-                    ga_path, solution_generation_count = ga_solver.solve()
+                    # Update this line to handle the additional return value:
+                    ga_path, solution_generation_count, generation_fitness = ga_solver.solve()
                     run_time = time.time() - start_time
 
                     if ga_path is not None:
@@ -159,6 +160,7 @@ class TestRunner:
                             'time': run_time,
                             'path': ga_path,
                             'solution_generation_count': solution_generation_count,
+                            'generation_fitness': generation_fitness,  # Add this line
                         })
                     else:
                         ga_results.append({
@@ -167,6 +169,7 @@ class TestRunner:
                             'time': run_time,
                             'path': None,
                             'solution_generation_count': solution_generation_count,
+                            'generation_fitness': generation_fitness,  # Add this line
                         })
 
                 print(" " * 30, end="\r")  # Clear the progress line
@@ -338,6 +341,8 @@ class TestRunner:
             # Print comparison summary
             self._print_comparison_summary(test_results)
 
+            self.export_fitness_data(test_results)
+
         return self.results
 
     def _print_comparison_summary(self, test_results):
@@ -397,6 +402,57 @@ class TestRunner:
                       f"Success={ts['success_rate']*100:.1f}%")
             else:
                 print(f"TS Config {config_id}: No valid solution, Time={ts['avg_time']:.4f}s")
+
+    def export_fitness_data(self, test_results, output_dir="results"):
+        """
+        Export the fitness data for each GA configuration to CSV files
+        for later visualization.
+        """
+        import os
+        import pandas as pd
+        import numpy as np
+
+        os.makedirs(output_dir, exist_ok=True)
+
+        test_id = test_results['test_id']
+
+        # Process genetic algorithm results
+        for config_idx, ga_config in enumerate(test_results['methods']['genetic']):
+            config_id = ga_config['config_id']
+
+            # Collect fitness data from all valid runs
+            all_fitness_data = {}
+
+            for run in ga_config['all_runs']:
+                if 'generation_fitness' in run and run['valid']:
+                    for gen, fitness in run['generation_fitness']:
+                        if gen not in all_fitness_data:
+                            all_fitness_data[gen] = []
+                        all_fitness_data[gen].append(fitness)
+
+            # If we have fitness data to save
+            if all_fitness_data:
+                # Convert to dataframe
+                generations = sorted(all_fitness_data.keys())
+                avg_fitness = [np.mean(all_fitness_data[gen]) for gen in generations]
+                std_fitness = [np.std(all_fitness_data[gen]) for gen in generations]
+                min_fitness = [min(all_fitness_data[gen]) for gen in generations]
+                max_fitness = [max(all_fitness_data[gen]) for gen in generations]
+
+                data = {
+                    'generation': generations,
+                    'avg_fitness': avg_fitness,
+                    'std_fitness': std_fitness,
+                    'min_fitness': min_fitness,
+                    'max_fitness': max_fitness
+                }
+
+                fitness_df = pd.DataFrame(data)
+
+                # Save to file
+                filename = f"{output_dir}/fitness_data_test{test_id}_config{config_id}.csv"
+                fitness_df.to_csv(filename, index=False)
+                print(f"Fitness data for GA Config {config_id} saved to: {filename}")
 
     def export_comparison_csv(self, output_dir="results"):
         """Export only the algorithm comparison table to CSV"""

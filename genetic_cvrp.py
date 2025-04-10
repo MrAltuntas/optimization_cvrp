@@ -16,6 +16,7 @@ class GeneticCVRP:
         self.best_solution_generation_count = None
         self.best_fitness = float('inf')
         self.improved_evaluation = improved_evaluation
+        self.generation_fitness = []  # Track fitness values for visualization
 
     def create_individual(self):
         """
@@ -287,6 +288,18 @@ class GeneticCVRP:
         # Create initial population
         population = [self.create_individual() for _ in range(self.population_size)]
 
+        # Reset generation fitness array each time evolve is called
+        self.generation_fitness = []
+
+        # Store initial fitness
+        if self.improved_evaluation:
+            initial_fitness = min([self.calculate_fitness_improved(ind) for ind in population])
+        else:
+            initial_fitness = min([self.calculate_fitness(ind) for ind in population])
+
+        # Record initial fitness (generation 0)
+        self.generation_fitness.append((0, initial_fitness))
+
         # Evolution loop
         for generation in range(self.generations):
             # Evaluate and sort population
@@ -295,16 +308,12 @@ class GeneticCVRP:
             else:
                 population.sort(key=lambda x: self.calculate_fitness(x))
 
-
-
             # Update best solution if better one found
             current_best = population[0]
             if self.improved_evaluation:
                 current_best_fitness = self.calculate_fitness_improved(current_best)
             else:
                 current_best_fitness = self.calculate_fitness(current_best)
-
-
 
             if current_best_fitness < self.best_fitness:
                 self.best_solution = current_best.copy()
@@ -332,23 +341,24 @@ class GeneticCVRP:
 
             population = new_population
 
-            # Log progress periodically
-            if generation % 10 == 0:
+            # Log progress periodically and store fitness values for visualization
+            if generation % 5 == 0:
                 print(f"Generation {generation}: Best fitness = {self.best_fitness}")
+                self.generation_fitness.append((generation, self.best_fitness))
 
         if self.best_solution is None:
             print("Warning: No valid solution found")
-            return None, self.best_solution_generation_count
+            return None, self.best_solution_generation_count, self.generation_fitness
 
         # Prepare final solution with depot added if needed
         solution = self.best_solution.copy()
         solution_generation_count = self.best_solution_generation_count
 
-        return solution, solution_generation_count
+        return solution, solution_generation_count, self.generation_fitness
 
     def solve(self):
         """
         Solves the CVRP problem and returns the best path found.
         """
-        path, solution_generation_count = self.evolve()
-        return path, solution_generation_count
+        path, solution_generation_count, generation_fitness = self.evolve()
+        return path, solution_generation_count, generation_fitness

@@ -37,6 +37,157 @@ class VisualizationTools:
 
         return self.data
 
+    def plot_fitness_trends(self, output_dir=None):
+        """
+        Plot the fitness trends over generations for GA configurations with simplified visualization.
+        Only shows average fitness values with intuitive scaling for better readability.
+
+        Args:
+            output_dir: Directory to save the plot
+        """
+        if output_dir is None:
+            output_dir = os.path.join(self.output_dir, 'plots')
+
+        os.makedirs(output_dir, exist_ok=True)
+
+        # Get all fitness data files from the results directory
+        fitness_files = []
+        for file in os.listdir(self.output_dir):
+            if file.startswith('fitness_data_test') and file.endswith('.csv'):
+                fitness_files.append(file)
+
+        if not fitness_files:
+            print("No fitness data files found to plot fitness trends")
+            return
+
+        # Group files by test
+        test_files = {}
+        for file in fitness_files:
+            # Extract test ID from filename
+            test_id = file.split('_')[2].replace('test', '')
+            if test_id not in test_files:
+                test_files[test_id] = []
+            test_files[test_id].append(file)
+
+        # Create a plot for each test
+        for test_id, files in test_files.items():
+            # Find test name from our data
+            if self.data is None:
+                self.load_data()
+
+            test_data = self.data[self.data['test_id'] == int(test_id)]
+            if test_data.empty:
+                test_name = f"Test {test_id}"
+            else:
+                test_name = test_data['test_name'].iloc[0]
+
+            # Create a single figure with nice styling
+            plt.figure(figsize=(12, 8))
+
+            # Collect data for all configurations to determine appropriate scales
+            all_fitness_data = []
+            config_names = []
+
+            for file in files:
+                # Extract config ID from filename
+                config_id = file.split('_')[-1].replace('.csv', '')
+
+                # Load fitness data
+                fitness_data = pd.read_csv(os.path.join(self.output_dir, file))
+
+                # Find the configuration details
+                config_row = test_data[test_data['algorithm'].str.startswith(f'GA (Config {config_id})')]
+
+                if not config_row.empty:
+                    config_name = config_row['algorithm'].iloc[0]
+                    params = config_row['parameters'].iloc[0]
+                    if 'Mut=' in params:
+                        mutations = params.split('Mut=')[1].split(',')[0]
+                        label = f"{config_name} (Mut={mutations})"
+                    else:
+                        label = config_name
+                else:
+                    label = f"GA Config {config_id}"
+
+                all_fitness_data.append(fitness_data)
+                config_names.append(label)
+
+            # Process data to make visualization more readable
+            # We'll use a piecewise approach:
+            # 1. First transform values: subtract minimum value and add small offset to avoid zeros
+            # 2. Then use logarithmic scale for the very high values
+
+            # Find overall minimum fitness value across all configs (excluding infinity)
+            min_fitness = float('inf')
+            for data in all_fitness_data:
+                curr_min = data['avg_fitness'].replace([np.inf, -np.inf], np.nan).min()
+                if not np.isnan(curr_min) and curr_min < min_fitness:
+                    min_fitness = curr_min
+
+            # Apply grid styling
+            plt.grid(True, alpha=0.3, linestyle='--')
+
+            # Plot each configuration with transformed values
+            for i, (fitness_data, label) in enumerate(zip(all_fitness_data, config_names)):
+                # Create a copy of data for transformation
+                transformed_fitness = fitness_data['avg_fitness'].copy()
+
+                # Find where fitness drops to valid solution range (below 100)
+                valid_solution_idx = None
+                for idx, val in enumerate(transformed_fitness):
+                    if val < 100:
+                        valid_solution_idx = idx
+                        break
+
+                # Plot with nice coloring
+                plt.plot(fitness_data['generation'], transformed_fitness,
+                         linewidth=2.5, label=label)
+
+                # Add annotation where fitness becomes a valid solution
+                if valid_solution_idx is not None:
+                    gen = fitness_data['generation'].iloc[valid_solution_idx]
+                    val = transformed_fitness.iloc[valid_solution_idx]
+                    plt.annotate(f"Valid: {int(val)}",
+                                 xy=(gen, val),
+                                 xytext=(10, 10),
+                                 textcoords="offset points",
+                                 arrowprops=dict(arrowstyle="->", connectionstyle="arc3,rad=.2"))
+
+                # Add annotation for final value
+                if len(fitness_data) > 0:
+                    final_idx = len(fitness_data) - 1
+                    final_gen = fitness_data['generation'].iloc[final_idx]
+                    final_val = transformed_fitness.iloc[final_idx]
+                    if final_val < 1000:  # Only annotate if it's a reasonable value
+                        plt.annotate(f"Final: {int(final_val)}",
+                                     xy=(final_gen, final_val),
+                                     xytext=(-40, -20),
+                                     textcoords="offset points",
+                                     arrowprops=dict(arrowstyle="->", connectionstyle="arc3,rad=.2"))
+
+            # Set y-axis to log scale for better visualization of the full range
+            plt.yscale('log')
+
+            # Set titles and labels
+            plt.title(f'Average Fitness Progress - {test_name}', fontsize=14)
+            plt.xlabel('Generation', fontsize=12)
+            plt.ylabel('Average Fitness (log scale, lower is better)', fontsize=12)
+
+            # Add legend with better positioning
+            plt.legend(loc='upper right', fontsize=10)
+
+            # Ensure y-axis has a reasonable minimum value
+            plt.ylim(bottom=max(1, min_fitness * 0.9))
+
+            plt.tight_layout()
+
+            # Save the plot
+            plot_filename = f"fitness_trends_{test_name.replace(' ', '_')}.png"
+            plt.savefig(os.path.join(output_dir, plot_filename), dpi=300, bbox_inches='tight')
+            plt.close()
+
+        return output_dir
+
     def generate_all_charts(self):
         """Generate all charts and save them to the output directory."""
         if self.data is None:
@@ -56,6 +207,7 @@ class VisualizationTools:
             self.plot_ga_generation_performance(output_dir=plots_dir)
             self.plot_ga_parameter_effects(output_dir=plots_dir)
             self.plot_ts_parameter_effects(output_dir=plots_dir)
+            self.plot_fitness_trends(output_dir=plots_dir)  # Add this line
         except Exception as e:
             print(f"Warning: Could not generate some algorithm-specific charts: {e}")
 

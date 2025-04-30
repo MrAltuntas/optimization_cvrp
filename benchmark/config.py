@@ -30,38 +30,12 @@ INSTANCE_FILES = [
     "instances/A-n60-k9.vrp"
 ]
 
-# Test configurations for studying parameter effects
+# Test configurations for studying parameter effects (modified for research questions)
 PARAMETER_TESTS = [
-    # Testing mutation rate effect
-    {
-        "name": "Mutation Rate",
-        "values": [0.01, 0.05, 0.1, 0.2, 0.3],
-        "parameter": "GA_MUTATION_RATE",
-        "default_params": {
-            "GA_POPULATION_SIZE": 100,
-            "GA_GENERATIONS": 100,
-            "GA_CROSSOVER_RATE": 0.7,
-            "GA_TOURNAMENT_SIZE": 5,
-            "GA_ELITISM_SIZE": 2
-        }
-    },
-    # Testing crossover rate effect
-    {
-        "name": "Crossover Rate",
-        "values": [0.3, 0.5, 0.7, 0.9],
-        "parameter": "GA_CROSSOVER_RATE",
-        "default_params": {
-            "GA_POPULATION_SIZE": 100,
-            "GA_GENERATIONS": 100,
-            "GA_MUTATION_RATE": 0.1,
-            "GA_TOURNAMENT_SIZE": 5,
-            "GA_ELITISM_SIZE": 2
-        }
-    },
-    # Testing tournament size effect
+    # Q1 & Q2: Testing tournament size effect (including Tour=1 and Tour=pop_size)
     {
         "name": "Tournament Size",
-        "values": [1, 3, 5, 10, 20],
+        "values": [1, 3, 5, 10, 20, 100],  # Added 100 (pop_size) to test extreme case
         "parameter": "GA_TOURNAMENT_SIZE",
         "default_params": {
             "GA_POPULATION_SIZE": 100,
@@ -71,10 +45,39 @@ PARAMETER_TESTS = [
             "GA_ELITISM_SIZE": 2
         }
     },
-    # Testing elitism size effect
+
+    # Q4 & Q5: Testing mutation rate effect (including extreme values)
+    {
+        "name": "Mutation Rate",
+        "values": [0.0, 0.01, 0.05, 0.1, 0.3, 0.5, 1.0],  # Added 0.0 (no mutation) and 1.0 (always mutate)
+        "parameter": "GA_MUTATION_RATE",
+        "default_params": {
+            "GA_POPULATION_SIZE": 100,
+            "GA_GENERATIONS": 100,
+            "GA_CROSSOVER_RATE": 0.7,
+            "GA_TOURNAMENT_SIZE": 5,
+            "GA_ELITISM_SIZE": 2
+        }
+    },
+
+    # Q6 & Q7: Testing crossover rate effect (including extreme values)
+    {
+        "name": "Crossover Rate",
+        "values": [0.0, 0.3, 0.5, 0.7, 0.9, 1.0],  # Added 0.0 (no crossover) and 1.0 (always crossover)
+        "parameter": "GA_CROSSOVER_RATE",
+        "default_params": {
+            "GA_POPULATION_SIZE": 100,
+            "GA_GENERATIONS": 100,
+            "GA_MUTATION_RATE": 0.1,
+            "GA_TOURNAMENT_SIZE": 5,
+            "GA_ELITISM_SIZE": 2
+        }
+    },
+
+    # Q9: Testing elitism size effect
     {
         "name": "Elitism Size",
-        "values": [0, 1, 2, 5, 10],
+        "values": [0, 1, 2, 5, 10, 20],  # Added 20 to test large elitism
         "parameter": "GA_ELITISM_SIZE",
         "default_params": {
             "GA_POPULATION_SIZE": 100,
@@ -84,10 +87,11 @@ PARAMETER_TESTS = [
             "GA_TOURNAMENT_SIZE": 5
         }
     },
-    # Testing population size effect
+
+    # Q10: Testing population size effect
     {
         "name": "Population Size",
-        "values": [50, 100, 200, 500],
+        "values": [10, 50, 100, 200, 500],  # Added very small population (10)
         "parameter": "GA_POPULATION_SIZE",
         "default_params": {
             "GA_GENERATIONS": 100,
@@ -97,10 +101,11 @@ PARAMETER_TESTS = [
             "GA_ELITISM_SIZE": 2
         }
     },
-    # Testing generations effect
+
+    # Q10: Testing generations effect
     {
         "name": "Generations",
-        "values": [50, 100, 200, 500],
+        "values": [10, 50, 100, 200, 500],  # Added very small number of generations (10)
         "parameter": "GA_GENERATIONS",
         "default_params": {
             "GA_POPULATION_SIZE": 100,
@@ -108,6 +113,25 @@ PARAMETER_TESTS = [
             "GA_MUTATION_RATE": 0.1,
             "GA_TOURNAMENT_SIZE": 5,
             "GA_ELITISM_SIZE": 2
+        }
+    },
+
+    # Q3: Testing CVRP-specific applicability with different selection pressures
+    {
+        "name": "Selection Pressure",
+        "values": ["weak", "moderate", "strong"],
+        "parameter": "SELECTION_PRESSURE",
+        "default_params": {
+            "GA_POPULATION_SIZE": 100,
+            "GA_GENERATIONS": 100,
+            "GA_CROSSOVER_RATE": 0.7,
+            "GA_MUTATION_RATE": 0.1,
+            "GA_ELITISM_SIZE": 2
+        },
+        "special_params": {
+            "weak": {"GA_TOURNAMENT_SIZE": 2},
+            "moderate": {"GA_TOURNAMENT_SIZE": 5},
+            "strong": {"GA_TOURNAMENT_SIZE": 15}
         }
     }
 ]

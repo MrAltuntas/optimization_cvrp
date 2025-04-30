@@ -400,8 +400,20 @@ class TestRunner:
 
                 # Set parameter value
                 params = default_params.copy()
-                params_lower = {k.lower().split('ga_')[-1]: v for k, v in params.items()}
-                params_lower[parameter.lower().split('ga_')[-1]] = value
+
+                # Handle special case for selection pressure
+                if parameter == "SELECTION_PRESSURE" and "special_params" in test:
+                    # Get the specific parameters for this selection pressure value
+                    special_param = test["special_params"].get(value, {})
+                    # Update params with the special parameter values
+                    params.update(special_param)
+                else:
+                    # Normal parameter handling
+                    params[parameter] = value
+
+                # Convert keys to lowercase without the GA_ prefix for proper parameter passing
+                params_lower = {k.lower().split('ga_')[-1]: v for k, v in params.items()
+                                if k.lower().startswith('ga_')}  # Only include GA parameters
 
                 # Run genetic algorithm
                 solver = GeneticCVRP(problem, **params_lower)
@@ -583,20 +595,24 @@ class TestRunner:
                 'Instance': instance,
                 'Greedy Distance': greedy['distance'],
                 'Greedy Time': greedy['time'],
+                'Greedy Best Solution': self._format_routes(greedy['routes']),
                 'Random Best': random_stats['best'],
                 'Random Avg': random_stats['avg'],
                 'Random Std': random_stats['std'],
                 'Random Time': random_stats['avg_time'],
+                'Random Best Solution': self._format_routes(random_best['routes']),
                 'Genetic Best': genetic_stats['best'],
                 'Genetic Avg': genetic_stats['avg'],
                 'Genetic Std': genetic_stats['std'],
                 'Genetic Time': genetic_stats['avg_time'],
                 'Genetic Best Gen': genetic_stats['avg_best_generation'],
+                'Genetic Best Solution': self._format_routes(genetic_best['routes']),
                 'Tabu Best': tabu_stats['best'],
                 'Tabu Avg': tabu_stats['avg'],
                 'Tabu Std': tabu_stats['std'],
                 'Tabu Time': tabu_stats['avg_time'],
-                'Tabu Best Iter': tabu_stats['avg_best_iteration']
+                'Tabu Best Iter': tabu_stats['avg_best_iteration'],
+                'Tabu Best Solution': self._format_routes(tabu_best['routes'])
             })
 
         summary_df = pd.DataFrame(summary)
@@ -610,12 +626,32 @@ class TestRunner:
             f.write('th, td {border: 1px solid black; padding: 8px; text-align: center;} ')
             f.write('th {background-color: #f2f2f2;} ')
             f.write('tr:nth-child(even) {background-color: #f9f9f9;} ')
+            f.write('.route-cell {max-width: 250px; overflow: auto; white-space: nowrap;} ')
             f.write('</style></head><body>')
             f.write('<h1>CVRP Algorithms Performance Summary</h1>')
-            f.write(summary_df.to_html(index=False))
+
+            # Convert DataFrame to HTML with custom formatting for route cells
+            html_table = summary_df.to_html(index=False)
+            # Add CSS class to route cells
+            for col in ['Greedy Best Solution', 'Random Best Solution', 'Genetic Best Solution', 'Tabu Best Solution']:
+                html_table = html_table.replace(f'<th>{col}</th>', f'<th class="route-cell">{col}</th>')
+                html_table = html_table.replace(f'<td>{col}</td>', f'<td class="route-cell">{col}</td>')
+
+            f.write(html_table)
             f.write('</body></html>')
 
         print(f"Summary saved to: {html_path}")
+
+    def _format_routes(self, routes):
+        """Format routes as a concise string representation."""
+        # Format each route as a comma-separated list of cities
+        route_strings = []
+        for i, route in enumerate(routes):
+            route_str = f"R{i+1}: {' → '.join(map(str, route))}"
+            route_strings.append(route_str)
+
+        # Join the routes with line breaks
+        return " | ".join(route_strings)
 
 
 def main():
